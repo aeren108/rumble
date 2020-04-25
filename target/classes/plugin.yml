@@ -1,0 +1,22 @@
+name: Rumble
+description: Rumble is a plugin which simply adapts RocketLeague's Rumble game mode to Minecraft
+author: AerenPozitif
+main: aeren.rumble.RumbleMain
+version: 1.0
+
+commands:
+  start:
+    description: Starts the game
+    usage: /start
+  end:
+    description: Ends the game
+    usage: /end
+  team:
+    description: Create a team
+    usage: /<command>
+  powerup:
+    description: Change powerup duration
+    usage: /<command>
+  arena:
+    description: Change arena size
+    usage: /arena [arena-size]

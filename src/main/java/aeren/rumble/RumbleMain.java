@@ -1,9 +1,6 @@
 package aeren.rumble;
 
-import aeren.rumble.commands.EndCommand;
-import aeren.rumble.commands.PowerupCommand;
-import aeren.rumble.commands.StartCommand;
-import aeren.rumble.commands.TeamCommand;
+import aeren.rumble.commands.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class RumbleMain extends JavaPlugin {
@@ -14,11 +11,16 @@ public class RumbleMain extends JavaPlugin {
 
     Util.initEffects();
     Util.initDefaultItems();
+    Util.initEffectDescriptions();
 
     this.getCommand("start").setExecutor(new StartCommand());
     this.getCommand("end").setExecutor(new EndCommand());
     this.getCommand("team").setExecutor(new TeamCommand());
     this.getCommand("powerup").setExecutor(new PowerupCommand());
+    this.getCommand("arena").setExecutor(new ArenaCommand());
+    this.getCommand("duration").setExecutor(new DurationCommand());
+
+    this.getServer().getPluginManager().registerEvents(new EventListener(), this);
   }
 
   @Override

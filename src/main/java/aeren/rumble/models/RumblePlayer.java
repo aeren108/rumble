@@ -4,12 +4,16 @@ import org.bukkit.entity.Player;
 
 public class RumblePlayer {
   private String name;
-  private int deaths = 0;
+  private int deaths;
+  private int kills;
+  private int point;
   private Team team;
 
   public RumblePlayer(String name) {
     this.name = name;
     this.deaths = 0;
+    this.kills = 0;
+    this.point = 0;
     this.team = null;
   }
 
@@ -37,4 +41,19 @@ public class RumblePlayer {
     this.deaths = deaths;
   }
 
+  public int getKills() {
+    return kills;
+  }
+
+  public void setKills(int kills) {
+    this.kills = kills;
+  }
+
+  public int getPoint() {
+    return point;
+  }
+
+  public void setPoint(int point) {
+    this.point = point;
+  }
 }

@@ -1,8 +1,10 @@
 package aeren.rumble.commands;
 
+import aeren.rumble.RumbleMain;
 import aeren.rumble.Util;
 import aeren.rumble.models.RumblePlayer;
 import aeren.rumble.models.Team;
+
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,16 +12,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class StartCommand implements CommandExecutor {
+public class StartCommand implements CommandExecutor, Runnable {
   private int secondsPassed = 0;
   private Random random = new Random();
-
-  private int taskId = 0;
 
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -36,6 +36,7 @@ public class StartCommand implements CommandExecutor {
       }
 
       Util.IS_STARTED = true;
+      secondsPassed = 0;
 
       Location loc = player.getLocation();
 
@@ -49,54 +50,30 @@ public class StartCommand implements CommandExecutor {
         for (RumblePlayer pl : team.getPlayers()) {
           Player player0 = Bukkit.getPlayer(pl.getName());
 
+          pl.setDeaths(0);
+
           player0.teleport(loc);
           player0.setBedSpawnLocation(loc);
+          player0.setHealth(player0.getMaxHealth());
         }
       }
 
-      final BukkitScheduler scheduler = Bukkit.getScheduler();
-      taskId = scheduler.scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("Rumble"), new Runnable() {
-        @Override
-        public void run() {
-          if (secondsPassed >= Util.POWERUP_DURATION * 12) {
-            Bukkit.dispatchCommand(player, "end");
-            scheduler.cancelTask(taskId);
-
-            secondsPassed = 0;
-          }
-
-          for (Team team : Util.TEAMS) {
-            for (RumblePlayer pl : team.getPlayers()) {
-              Player player = Bukkit.getPlayer(pl.getName());
-
-              player.getInventory().clear();
-              for (PotionEffect effect : player.getActivePotionEffects()) {
-                player.removePotionEffect(effect.getType());
-              }
-
-              giveRumbleEffects(player);
-            }
-          }
-
-          secondsPassed += Util.POWERUP_DURATION;
-
-        }
-      }, 0L, Util.POWERUP_DURATION * 20L);
+      Bukkit.getScheduler().scheduleSyncRepeatingTask(RumbleMain.getPlugin(RumbleMain.class), this, 0L, Util.POWERUP_DURATION * 20L);
     }
 
     return false;
   }
 
-  private void stopSchedule() {
-    Bukkit.getScheduler().cancelTask(taskId);
-  }
-
   private void giveRumbleEffects(Player player) {
-    Object effect = Util.RUMBLE_EFFECTS.get(random.nextInt(Util.RUMBLE_EFFECTS.size()));
+    int randomIndex = random.nextInt(Util.RUMBLE_EFFECTS.size());
+    Object effect = Util.RUMBLE_EFFECTS.get(randomIndex);
 
     if (effect instanceof PotionEffect) {
       PotionEffect potEffect = (PotionEffect) effect;
       player.addPotionEffect(potEffect);
+
+      if (potEffect.getType() == PotionEffectType.HEALTH_BOOST)
+        player.setHealth(player.getMaxHealth());
 
     } else if (effect instanceof ArrayList) {
       ArrayList<ItemStack> items = (ArrayList<ItemStack>) effect;
@@ -105,9 +82,39 @@ public class StartCommand implements CommandExecutor {
         player.getInventory().addItem(item);
     }
 
+    player.getInventory().setArmorContents(Util.DEFAULT_ARMOR);
+
     for (ItemStack item : Util.DEFAULT_ITEMS)
       player.getInventory().addItem(item);
 
+    player.sendMessage(ChatColor.AQUA + "You are blessed with: " + ChatColor.GOLD + Util.EFFECT_DESCS.get(randomIndex));
   }
 
+  @Override
+  public void run() {
+    if (secondsPassed >= Util.GAME_DURATION) {
+      Bukkit.dispatchCommand(Bukkit.getPlayer(Util.PLAYERS.get(0).getName()), "end");
+      Bukkit.getScheduler().cancelTasks(RumbleMain.getPlugin(RumbleMain.class));
+
+      secondsPassed = 0;
+      Util.IS_STARTED = false;
+    }
+
+    if (!Util.IS_STARTED)
+      return;
+
+    for (Team team : Util.TEAMS) {
+      for (RumblePlayer pl : team.getPlayers()) {
+        Player player = Bukkit.getPlayer(pl.getName());
+
+        player.getInventory().clear();
+        for (PotionEffect effect : player.getActivePotionEffects())
+          player.removePotionEffect(effect.getType());
+
+        giveRumbleEffects(player);
+      }
+    }
+
+    secondsPassed += Util.POWERUP_DURATION;
+  }
 }

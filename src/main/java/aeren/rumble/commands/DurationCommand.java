@@ -8,28 +8,28 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class PowerupCommand implements CommandExecutor {
+public class DurationCommand implements CommandExecutor {
 
+  @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if (sender instanceof Player) {
       Player player = (Player) sender;
 
-      if (args.length != 1) {
-        sender.sendMessage(ChatColor.RED + "ERROR: Wrong usage.\nUSAGE: /powerup [powerup-duration]");
+      if (Util.IS_STARTED) {
+        sender.sendMessage(ChatColor.RED + "You can not change game duration while game is not finished");
         return false;
-      } else if (Util.IS_STARTED) {
-        sender.sendMessage(ChatColor.RED + "You can not change power up duration while game is not finished");
+      } else if (args.length != 1) {
+        sender.sendMessage(ChatColor.RED + "Wrong usage.\nUsage: /duration [duration]");
         return false;
       }
 
       try {
         int duration = Integer.parseInt(args[0]);
-        Util.POWERUP_DURATION = duration;
 
-        Bukkit.broadcastMessage(ChatColor.AQUA + "Powerup duration has been changed to " + ChatColor.GOLD + duration + ChatColor.AQUA + " seconds");
-
+        Util.GAME_DURATION = duration;
+        Bukkit.broadcastMessage(ChatColor.AQUA + "Game duration has been changed to " + ChatColor.GOLD + duration + ChatColor.AQUA + " seconds");
       } catch (NumberFormatException e) {
-        sender.sendMessage(ChatColor.RED + "Powerup duration must be an integer");
+        sender.sendMessage(ChatColor.RED + "Duration must be an integer");
         return false;
       }
 

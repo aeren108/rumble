@@ -20,3 +20,6 @@ commands:
   arena:
     description: Change arena size
     usage: /arena [arena-size]
+  duration:
+    description: Change game duration
+    usage: /duration [duration]

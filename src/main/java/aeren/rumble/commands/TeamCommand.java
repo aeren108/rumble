@@ -23,28 +23,69 @@ public class TeamCommand implements CommandExecutor {
       if (player == null)
         player = new RumblePlayer(p.getDisplayName());
 
-      if (args.length != 1) {
-        sender.sendMessage(ChatColor.RED + "ERROR: Wrong usage.\nUSAGE: /team [team-name]");
-        return false;
-      } else if (Util.IS_STARTED) {
+      if (Util.IS_STARTED) {
         sender.sendMessage(ChatColor.RED + "You can not create or join a team while game is not finished");
         return false;
       }
 
-      if (player.getTeam() != null) {
-        player.getTeam().getPlayers().remove(player);
+      if (args.length == 0) {
+        if (player.getTeam() == null) {
+          sender.sendMessage(ChatColor.RED + "You are not a member of any team");
+          return false;
+        }
 
-        if (player.getTeam().getPlayers().size() == 0)
-          Util.TEAMS.remove(player.getTeam());
+        sender.sendMessage(ChatColor.AQUA + "The players in your team: ");
+        for (RumblePlayer pl : player.getTeam().getPlayers()) {
+          sender.sendMessage(ChatColor.GOLD + pl.getName());
+        }
+      } else if (args.length == 1) {
+
+        if (player.getTeam() != null) {
+          player.getTeam().getPlayers().remove(player);
+
+          if (player.getTeam().getPlayers().size() == 0)
+            Util.TEAMS.remove(player.getTeam());
+        }
+
+        Team team = new Team(args[0]);
+        team.getPlayers().add(player);
+        player.setTeam(team);
+
+        Util.TEAMS.add(team);
+        Util.PLAYERS.add(player);
+        Bukkit.broadcastMessage(ChatColor.AQUA + player.getName() + "joined team: " + ChatColor.GOLD + team.getTeamName());
+
+      } else if (args.length == 2) {
+        String task = args[0];
+        String playerToJoin = args[1];
+
+        if (!task.equals("join")) {
+          sender.sendMessage(ChatColor.RED + "Wrong usage.\nUsage: /team join [player-name]");
+          return false;
+        }
+
+        RumblePlayer rp = Util.findPlayerByName(playerToJoin);
+
+        if (rp == null || rp.getTeam() == null) {
+          sender.sendMessage(ChatColor.LIGHT_PURPLE + playerToJoin + " isn't a member of a team");
+          return false;
+        }
+
+        Team team = rp.getTeam();
+
+        if (player.getTeam() != null) {
+          player.getTeam().getPlayers().remove(player);
+
+          if (player.getTeam().getPlayers().size() == 0)
+            Util.TEAMS.remove(player.getTeam());
+        } else if (rp.getTeam() == player.getTeam()) {
+          sender.sendMessage(ChatColor.GREEN + "You are already in this team: " + ChatColor.GOLD + rp.getTeam().getTeamName());
+        }
+
+        player.setTeam(team);
+
+        Bukkit.broadcastMessage(ChatColor.GOLD + player.getName() + ChatColor.AQUA + " joined team: " + ChatColor.GOLD + player.getTeam().getTeamName());
       }
-
-      Team team = new Team(args[0]);
-      team.getPlayers().add(player);
-      player.setTeam(team);
-
-      Util.TEAMS.add(team);
-      Util.PLAYERS.add(player);
-      Bukkit.broadcastMessage(ChatColor.AQUA + player.getName() + "joined team: " + ChatColor.GOLD + team.getTeamName());
 
       return true;
     }

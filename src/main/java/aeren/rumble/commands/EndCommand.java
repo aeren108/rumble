@@ -1,5 +1,6 @@
 package aeren.rumble.commands;
 
+import aeren.rumble.RumbleMain;
 import aeren.rumble.Util;
 import aeren.rumble.models.RumblePlayer;
 import aeren.rumble.models.Team;
@@ -24,6 +25,8 @@ public class EndCommand implements CommandExecutor {
       sender.sendMessage(ChatColor.RED + "There is no game to end");
       return true;
     }
+
+    Bukkit.getScheduler().cancelTasks(RumbleMain.getPlugin(RumbleMain.class));
 
     Util.IS_STARTED = false;
 

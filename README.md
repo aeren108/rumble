@@ -9,7 +9,7 @@ Download the plugin file and copy it to the your server's plugins folder.
 Reload the server and that's it.
 
 #### Download
-Download [Rumble.jar](https://www.dropbox.com/s/65mzxuffh1sphgd/Rumble-1.0.jar?dl=0)
+[Download](https://www.dropbox.com/s/65mzxuffh1sphgd/Rumble-1.0.jar?dl=0) Rumble-1.0.
 
 ### Commands
 * **/start** =>

@@ -64,35 +64,35 @@ public class EventListener implements Listener {
     final Player player = event.getPlayer();
     final RumblePlayer rp = Util.findPlayerByName(player.getDisplayName());
 
-    if (rp != null) {
-      player.getInventory().clear();
+    if (rp == null || !Util.IS_STARTED)
+      return;
+    player.getInventory().clear();
 
-      //Scheduling a delayed task for 1 tick later because event is called before player spawned.
-      Bukkit.getScheduler().scheduleSyncDelayedTask(RumbleMain.getPlugin(RumbleMain.class), new Runnable() {
-        @Override
-        public void run() {
-          if (rp.getInventory() == null || rp.getEffects() == null)
-            return;
+    //Scheduling a delayed task for 1 tick later because event is called before player spawned.
+    Bukkit.getScheduler().scheduleSyncDelayedTask(RumbleMain.getPlugin(RumbleMain.class), new Runnable() {
+      @Override
+      public void run() {
+        if (rp.getInventory() == null || rp.getEffects() == null)
+          return;
 
-          for (ItemStack item : rp.getInventory()) {
-            if (item != null) {
-              if (item.getType() == Material.IRON_CHESTPLATE || item.getType() == Material.IRON_HELMET || item.getType() == Material.IRON_LEGGINGS || item.getType() == Material.IRON_BOOTS)
-                continue;
+        for (ItemStack item : rp.getInventory()) {
+          if (item != null) {
+            if (item.getType() == Material.IRON_CHESTPLATE || item.getType() == Material.IRON_HELMET || item.getType() == Material.IRON_LEGGINGS || item.getType() == Material.IRON_BOOTS)
+              continue;
 
-              player.getInventory().addItem(item);
-            }
-          }
-
-          player.getInventory().setArmorContents(Util.DEFAULT_ARMOR);
-
-          for (PotionEffect effect : rp.getEffects()) {
-            if (effect != null) {
-              effect.apply(player);
-            }
+            player.getInventory().addItem(item);
           }
         }
-      }, 1L);
-    }
+
+        player.getInventory().setArmorContents(Util.DEFAULT_ARMOR);
+
+        for (PotionEffect effect : rp.getEffects()) {
+          if (effect != null) {
+            effect.apply(player);
+          }
+        }
+      }
+    }, 1L);
   }
 
   @EventHandler()
@@ -100,7 +100,7 @@ public class EventListener implements Listener {
     Player player = event.getEntity();
     RumblePlayer rp = Util.findPlayerByName(player.getDisplayName());
 
-    if (rp == null)
+    if (rp == null || !Util.IS_STARTED)
       return;
 
     ItemStack[] content = player.getInventory().getContents();

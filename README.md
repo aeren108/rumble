@@ -11,7 +11,7 @@ Reload the server and that's it.
 #### Download
 Download [Rumble.jar](https://www.dropbox.com/s/65mzxuffh1sphgd/Rumble-1.0.jar?dl=0)
 
-#### Commands
+### Commands
 * **/start** =>
 Starts the game.
 * **/end** =>

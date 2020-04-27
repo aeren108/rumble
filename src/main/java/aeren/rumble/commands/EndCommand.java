@@ -39,6 +39,9 @@ public class EndCommand implements CommandExecutor {
           player.removePotionEffect(effect.getType());
         }
 
+        pl.setEffects(null);
+        pl.setInventory(null);
+
         Bukkit.broadcastMessage(ChatColor.AQUA + "Game is ended");
       }
     }

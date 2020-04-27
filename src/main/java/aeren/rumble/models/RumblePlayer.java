@@ -1,6 +1,8 @@
 package aeren.rumble.models;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 public class RumblePlayer {
   private String name;
@@ -8,6 +10,9 @@ public class RumblePlayer {
   private int kills;
   private int point;
   private Team team;
+
+  private ItemStack[] inventory;
+  private PotionEffect[] effects;
 
   public RumblePlayer(String name) {
     this.name = name;
@@ -55,5 +60,21 @@ public class RumblePlayer {
 
   public void setPoint(int point) {
     this.point = point;
+  }
+
+  public PotionEffect[] getEffects() {
+    return effects;
+  }
+
+  public void setEffects(PotionEffect[] effects) {
+    this.effects = effects;
+  }
+
+  public ItemStack[] getInventory() {
+    return inventory;
+  }
+
+  public void setInventory(ItemStack[] inventory) {
+    this.inventory = inventory;
   }
 }

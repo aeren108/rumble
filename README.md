@@ -19,9 +19,9 @@ Ends the game
 * **/team** =>
 Lists the players in the team you're in
 * **/team [team-name]** =>
-Creates a team named [team-name]
+Creates a team named [team-name]  (you leave your current team automatically)
 * **/team [player-name]** =>
-Joins the team which player is in
+Joins the team which player is in (you leave your current team automatically)
 * **/arena [arena-size]** =>
 Changes arena size to [arena-size] blocks
 * **/powerup [powerup-duration]** =>

@@ -6,6 +6,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -112,6 +114,29 @@ public class EventListener implements Listener {
     rp.setEffects(effects);
 
     player.getInventory().clear();
+  }
+
+  @EventHandler
+  public void onPlayerDamage(EntityDamageByEntityEvent event) {
+    if (!Util.IS_STARTED)
+      return;
+
+    if (event.getDamager() instanceof Player) {
+      Player damagerPlayer = (Player) event.getDamager();
+      RumblePlayer damager = Util.findPlayerByName(damagerPlayer.getDisplayName());
+
+      if (event.getEntity() instanceof Player) {
+        Player entity =  (Player) event.getEntity();
+        RumblePlayer player = Util.findPlayerByName(entity.getDisplayName());
+
+        if (player == null || player.getTeam() == null || damager == null || damager.getTeam() == null)
+          return;
+
+        if (player.getTeam().getPlayers().contains(damagerPlayer)) {
+          event.setCancelled(true);
+        }
+      }
+    }
   }
 
 }
